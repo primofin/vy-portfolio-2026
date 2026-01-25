@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from 'recharts';
 import { Target, Lightbulb, TrendingUp } from 'lucide-react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/DeprecatedNavbar';
 
 const data = [
   { name: 'Trước tối ưu', value: 45, color: '#ff4d4f' },
