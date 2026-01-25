@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from 'recharts';
 import { Target, Lightbulb, TrendingUp } from 'lucide-react';
-import Navbar from '@/components/DeprecatedNavbar';
+import Navbar from '@/components/Navbar';
 
 const data = [
   { name: 'Trước tối ưu', value: 45, color: '#ff4d4f' },
@@ -29,7 +29,7 @@ export default function PortfolioPage() {
   return (
     <>
       <Navbar />
-      <Container maxWidth='lg' sx={{ py: 8 }}>
+      <Container maxWidth='lg' sx={{ py: 16 }}>
         <Typography variant='h3' fontWeight='900' textAlign='center' mb={6}>
           Dự án Tiêu biểu
         </Typography>

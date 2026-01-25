@@ -8,76 +8,180 @@ import {
   Stack,
   Container,
   useScrollTrigger,
+  Box,
 } from '@mui/material';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
-const navItems = [
-  { label: 'Home', id: 'home' },
+const scrollItems = [
   { label: 'About', id: 'about' },
-  { label: 'Portfolio', id: 'portfolio' },
+  { label: 'Services', id: 'portfolio' },
   { label: 'Contact', id: 'contact' },
 ];
 
+const pageItems = [{ label: 'Portfolio', path: '/portfolio' }];
+
 export default function Navbar() {
-  const trigger = useScrollTrigger({
-    disableHysteresis: true,
-    threshold: 50,
-  });
+  const trigger = useScrollTrigger({ disableHysteresis: true, threshold: 50 });
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const handleScroll = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 80; // Account for fixed navbar height
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
+  // State to track which section is currently in view
+  const [activeSection, setActiveSection] = useState('');
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
+  // Scroll Spy Logic
+  useEffect(() => {
+    if (pathname !== '/') {
+      setActiveSection(''); // Reset if not on home page
+      return;
+    }
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '-50% 0px -50% 0px', // Trigger when section is in the middle of the viewport
+      threshold: 0,
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
       });
+    };
+
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions,
+    );
+
+    // Observe each section
+    scrollItems.forEach((item) => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  const handleNavClick = (id: string) => {
+    if (pathname !== '/') {
+      router.push(`/#${id}`);
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        const offset = 80;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = element.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
     }
   };
 
   return (
     <AppBar
       position='fixed'
-      elevation={trigger ? 4 : 0}
+      elevation={trigger || pathname !== '/' ? 4 : 0}
       sx={{
-        bgcolor: trigger ? 'rgba(255, 255, 255, 0.95)' : 'transparent',
-        backdropFilter: trigger ? 'blur(10px)' : 'none',
+        bgcolor:
+          trigger || pathname !== '/'
+            ? 'rgba(255, 255, 255, 0.95)'
+            : 'transparent',
+        backdropFilter: trigger || pathname !== '/' ? 'blur(10px)' : 'none',
         transition: '0.3s all ease-in-out',
         color: 'text.primary',
-        borderBottom: trigger ? '1px solid #eee' : 'none',
+        borderBottom: trigger || pathname !== '/' ? '1px solid #eee' : 'none',
       }}
     >
       <Container maxWidth='lg'>
         <Toolbar sx={{ justifyContent: 'space-between', px: '0 !important' }}>
           <Typography
             variant='h6'
-            component='div'
-            sx={{ fontWeight: 900, cursor: 'pointer', letterSpacing: -0.5 }}
-            onClick={() => handleScroll('home')}
+            component={Link}
+            href='/'
+            sx={{
+              fontWeight: 900,
+              textDecoration: 'none',
+              color: 'inherit',
+              letterSpacing: -0.5,
+            }}
           >
             VY<span style={{ color: '#007bff' }}>.</span>PORTFOLIO
           </Typography>
 
-          <Stack direction='row' spacing={1}>
-            {navItems.map((item) => (
+          <Stack direction='row' spacing={1} alignItems='center'>
+            {/* Internal SPA Links with Highlight Logic */}
+            {scrollItems.map((item) => {
+              const isActive = activeSection === item.id && pathname === '/';
+              return (
+                <Button
+                  key={item.id}
+                  onClick={() => handleNavClick(item.id)}
+                  sx={{
+                    color: isActive ? 'primary.main' : 'text.primary',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    display: { xs: 'none', md: 'inline-flex' },
+                    position: 'relative',
+                    transition: 'color 0.3s ease',
+                    // Underline indicator
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: 6,
+                      left: '15%',
+                      width: isActive ? '70%' : '0%',
+                      height: '2px',
+                      bgcolor: 'primary.main',
+                      transition: 'width 0.3s ease',
+                    },
+                  }}
+                >
+                  {item.label}
+                </Button>
+              );
+            })}
+
+            {/* Standalone Page Links */}
+            {pageItems.map((item) => (
               <Button
-                key={item.id}
-                onClick={() => handleScroll(item.id)}
+                key={item.path}
+                component={Link}
+                href={item.path}
                 sx={{
-                  color: 'text.primary',
+                  color:
+                    pathname === item.path ? 'primary.main' : 'text.primary',
                   textTransform: 'none',
                   fontWeight: 600,
-                  fontSize: '0.95rem',
-                  '&:hover': { color: 'primary.main', bgcolor: 'transparent' },
                 }}
               >
                 {item.label}
               </Button>
             ))}
+
+            <Button
+              component={Link}
+              href='/resume'
+              variant='contained'
+              size='small'
+              sx={{
+                ml: 1,
+                borderRadius: '8px',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                boxShadow: 'none',
+                bgcolor:
+                  pathname === '/resume' ? 'primary.dark' : 'primary.main',
+              }}
+            >
+              View Resume
+            </Button>
           </Stack>
         </Toolbar>
       </Container>

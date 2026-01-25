@@ -17,7 +17,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import Navbar from '@/components/DeprecatedNavbar';
+import Navbar from '@/components/Navbar';
 
 export default function ProfessionalCVPage() {
   const handleDownload = () => {
@@ -35,7 +35,7 @@ export default function ProfessionalCVPage() {
   return (
     <>
       <Navbar />
-      <Container maxWidth='lg' sx={{ py: { xs: 4, md: 8 } }}>
+      <Container maxWidth='lg' sx={{ py: { xs: 8, md: 16 } }}>
         {/* Action Bar */}
         <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end' }}>
           <Button
