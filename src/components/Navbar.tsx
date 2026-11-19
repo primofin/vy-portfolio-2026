@@ -8,18 +8,17 @@ import {
   Stack,
   Container,
   useScrollTrigger,
-  Box,
 } from '@mui/material';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 const scrollItems = [
   { label: 'About', id: 'about' },
-  { label: 'Services', id: 'portfolio' },
+  { label: 'Featured Projects', id: 'featured-projects' },
   { label: 'Contact', id: 'contact' },
 ];
 
-const pageItems = [{ label: 'Portfolio', path: '/portfolio' }];
+const pageItems: { label: string; path: string }[] = [];
 
 export default function Navbar() {
   const trigger = useScrollTrigger({ disableHysteresis: true, threshold: 50 });
@@ -87,16 +86,19 @@ export default function Navbar() {
   return (
     <AppBar
       position='fixed'
-      elevation={trigger || pathname !== '/' ? 4 : 0}
+      elevation={0}
       sx={{
         bgcolor:
           trigger || pathname !== '/'
-            ? 'rgba(255, 255, 255, 0.95)'
+            ? 'rgba(7, 8, 15, 0.7)'
             : 'transparent',
-        backdropFilter: trigger || pathname !== '/' ? 'blur(10px)' : 'none',
+        backdropFilter: trigger || pathname !== '/' ? 'blur(16px)' : 'none',
         transition: '0.3s all ease-in-out',
         color: 'text.primary',
-        borderBottom: trigger || pathname !== '/' ? '1px solid #eee' : 'none',
+        borderBottom:
+          trigger || pathname !== '/'
+            ? '1px solid rgba(255,255,255,0.08)'
+            : 'none',
       }}
     >
       <Container maxWidth='lg'>
@@ -112,7 +114,7 @@ export default function Navbar() {
               letterSpacing: -0.5,
             }}
           >
-            VY<span style={{ color: '#007bff' }}>.</span>PORTFOLIO
+            VY<span style={{ color: '#22d3ee' }}>.</span>PORTFOLIO
           </Typography>
 
           <Stack direction='row' spacing={1} alignItems='center'>
@@ -124,7 +126,7 @@ export default function Navbar() {
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
                   sx={{
-                    color: isActive ? 'primary.main' : 'text.primary',
+                    color: isActive ? 'secondary.main' : 'text.primary',
                     textTransform: 'none',
                     fontWeight: 600,
                     display: { xs: 'none', md: 'inline-flex' },
@@ -138,7 +140,7 @@ export default function Navbar() {
                       left: '15%',
                       width: isActive ? '70%' : '0%',
                       height: '2px',
-                      bgcolor: 'primary.main',
+                      bgcolor: 'secondary.main',
                       transition: 'width 0.3s ease',
                     },
                   }}
@@ -156,7 +158,7 @@ export default function Navbar() {
                 href={item.path}
                 sx={{
                   color:
-                    pathname === item.path ? 'primary.main' : 'text.primary',
+                    pathname === item.path ? 'secondary.main' : 'text.primary',
                   textTransform: 'none',
                   fontWeight: 600,
                 }}
@@ -176,8 +178,8 @@ export default function Navbar() {
                 textTransform: 'none',
                 fontWeight: 'bold',
                 boxShadow: 'none',
-                bgcolor:
-                  pathname === '/resume' ? 'primary.dark' : 'primary.main',
+                background: 'linear-gradient(120deg,#4f8cff,#22d3ee)',
+                color: '#05060b',
               }}
             >
               View Resume
